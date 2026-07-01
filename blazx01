@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BLĀZ X · Armando Lopez de Elizalde</title>
+  <style>
+    /* ----- reset & base ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0b0b0f;
+      color: #eaeef2;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    /* main card – cyberpunk glass */
+    .app-container {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(18, 20, 28, 0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 48px 48px 32px 32px;
+      padding: 24px 20px 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      transition: all 0.2s;
+    }
+
+    /* ----- splash / header ----- */
+    .splash-header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .brand-glow {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 6px;
+      background: linear-gradient(135deg, #b3f0ff, #7ae0ff, #3ac0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(0, 200, 255, 0.5);
+      margin-bottom: 6px;
+      line-height: 1;
+      filter: drop-shadow(0 0 12px #00a6ff55);
+    }
+
+    .artist-name {
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      color: #b6cad6;
+      background: rgba(0, 20, 30, 0.5);
+      display: inline-block;
+      padding: 4px 18px;
+      border-radius: 40px;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(0, 255, 255, 0.15);
+      box-shadow: 0 0 12px rgba(0, 180, 255, 0.2);
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    .artist-name span {
+      font-weight: 600;
+      color: #b3f0ff;
+    }
+
+    /* ----- external links (buttons) ----- */
+    .link-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn-external {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 12px;
+      border-radius: 60px;
+      background: rgba(20, 28, 40, 0.7);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      color: #d6edff;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      transition: 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .btn-external i {
+      font-style: normal;
+      font-size: 1.3rem;
+    }
+
+    .btn-external:active {
+      transform: scale(0.96);
+      background: rgba(0, 200, 255, 0.2);
+      border-color: #3ac0ff;
+      box-shadow: 0 0 24px #00a6ff55;
+    }
+
+    .btn-external.bandcamp {
+      border-color: rgba(255, 100, 200, 0.4);
+      background: rgba(60, 20, 50, 0.6);
+    }
+    .btn-external.bandcamp:active {
+      border-color: #ff66b0;
+      background: rgba(200, 0, 120, 0.25);
+    }
+
+    /* ----- sound lab (core) ----- */
+    .sound-section {
+      background: rgba(8, 12, 20, 0.6);
+      border-radius: 32px;
+      padding: 20px 16px 16px;
+      border: 1px solid rgba(0, 255, 255, 0.1);
+      backdrop-filter: blur(2px);
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      color: #7fc8e6;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .section-title small {
+      font-weight: 200;
+      color: #5d7f8f;
+    }
+
+    /* sliders */
+    .slider-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .slider-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-item label {
+      min-width: 64px;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #9bbccf;
+      text-transform: uppercase;
+    }
+
+    .slider-item input[type="range"] {
+      flex: 1;
+      height: 4px;
+      -webkit-appearance: none;
+      background: linear-gradient(90deg, #1f3a4a, #3ac0ff);
+      border-radius: 8px;
+      outline: none;
+      transition: 0.1s;
+    }
+
+    .slider-item input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #c2edff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #00ccffaa, 0 0 0 2px #0a2a3a;
+      cursor: pointer;
+      border: 2px solid #0a1a22;
+    }
+
+    .slider-value {
+      min-width: 36px;
+      text-align: right;
+      font-size: 0.75rem;
+      color: #b0daff;
+      font-weight: 300;
+    }
+
+    /* filter toggle */
+    .filter-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 20, 30, 0.4);
+      padding: 8px 16px;
+      border-radius: 40px;
+      margin: 8px 0 18px;
+      border: 1px solid rgba(0, 255, 255, 0.15);
+    }
+
+    .filter-toggle-row span {
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      color: #9fc8dd;
+    }
+
+    .filter-toggle-row .toggle-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .toggle-btn {
+      background: rgba(20, 30, 40, 0.6);
+      border: 1px solid #2a4a5a;
+      color: #aac8db;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: 0.1s;
+      cursor: pointer;
+      text-transform: uppercase;
+      backdrop-filter: blur(2px);
+    }
+
+    .toggle-btn.active {
+      background: rgba(0, 200, 255, 0.25);
+      border-color: #3ac0ff;
+      color: #e5f9ff;
+      box-shadow: 0 0 16px #00a6ff44;
+    }
+
+    /* 4x4 pad grid */
+    .pad-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .pad {
+      aspect-ratio: 1 / 1;
+      background: radial-gradient(circle at 30% 30%, #1c3140, #0d1a24);
+      border-radius: 16px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0 6px 0 #050a0e, 0 8px 20px rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #7faec9;
+      transition: all 0.06s;
+      text-shadow: 0 0 8px #00a6ff33;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .pad:active {
+      transform: scale(0.92);
+      background: radial-gradient(circle at 40% 40%, #2f5a72, #0b2a3a);
+      border-color: #5ad0ff;
+      box-shadow: 0 0 30px #00a6ff66, inset 0 0 20px #00a6ff33;
+      color: #f0fcff;
+    }
+
+    .pad-label {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 8px;
+      border-radius: 30px;
+      font-size: 0.5rem;
+      letter-spacing: 1px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* footer */
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.55rem;
+      color: #3d5f70;
+      letter-spacing: 2px;
+      border-top: 1px solid rgba(0, 255, 255, 0.05);
+      padding-top: 14px;
+    }
+
+    /* responsiveness */
+    @media (max-width: 420px) {
+      .app-container { padding: 16px 12px; }
+      .brand-glow { font-size: 2.2rem; }
+      .pad-grid { gap: 8px; }
+      .slider-item label { min-width: 54px; font-size: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container" role="main">
+
+    <!-- splash + branding -->
+    <div class="splash-header">
+      <div class="brand-glow">BLĀZ X</div>
+      <div class="artist-name"><span>✦</span> Armando Lopez de Elizalde <span>✦</span></div>
+    </div>
+
+    <!-- external links -->
+    <div class="link-grid">
+      <a class="btn-external" href="http://www.armaniblast.wordpress.wordpress.com" target="_blank" rel="noopener noreferrer">
+        <i>⧩</i> official website
+      </a>
+      <a class="btn-external bandcamp" href="https://a-blast.bandcamp.com/track/di-oxxia-01" target="_blank" rel="noopener noreferrer">
+        <i>▶</i> listen / buy · Di-oxxia 01
+      </a>
+    </div>
+
+    <!-- interactive sound lab -->
+    <div class="sound-section">
+      <div class="section-title">
+        <span>⚡ sound lab</span>
+        <small>touch · twist · jam</small>
+      </div>
+
+      <!-- sliders -->
+      <div class="slider-strip">
+        <div class="slider-item">
+          <label>gain</label>
+          <input type="range" id="gainSlider" min="0" max="2" step="0.01" value="0.8">
+          <span class="slider-value" id="gainVal">0.80</span>
+        </div>
+        <div class="slider-item">
+          <label>pitch</label>
+          <input type="range" id="pitchSlider" min="0.5" max="2.0" step="0.01" value="1.0">
+          <span class="slider-value" id="pitchVal">1.00</span>
+        </div>
+        <div class="slider-item">
+          <label>drive</label>
+          <input type="range" id="driveSlider" min="0" max="1" step="0.01" value="0.3">
+          <span class="slider-value" id="driveVal">0.30</span>
+        </div>
+        <div class="slider-item">
+          <label>delay</label>
+          <input type="range" id="delaySlider" min="0" max="0.8" step="0.01" value="0.2">
+          <span class="slider-value" id="delayVal">0.20</span>
+        </div>
+      </div>
+
+      <!-- filter toggle -->
+      <div class="filter-toggle-row">
+        <span>🔊 filter</span>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-filter="lowpass">low</button>
+          <button class="toggle-btn" data-filter="highpass">high</button>
+        </div>
+      </div>
+
+      <!-- 4x4 pads -->
+      <div class="pad-grid" id="padGrid">
+        <div class="pad" data-note="C3"><span class="pad-label">ambient</span></div>
+        <div class="pad" data-note="D3"><span class="pad-label">sub</span></div>
+        <div class="pad" data-note="E3"><span class="pad-label">glitch</span></div>
+        <div class="pad" data-note="F3"><span class="pad-label">lead</span></div>
+        <div class="pad" data-note="G3"><span class="pad-label">pad</span></div>
+        <div class="pad" data-note="A3"><span class="pad-label">drop</span></div>
+        <div class="pad" data-note="B3"><span class="pad-label">hit</span></div>
+        <div class="pad" data-note="C4"><span class="pad-label">synth</span></div>
+        <div class="pad" data-note="D4"><span class="pad-label">bass</span></div>
+        <div class="pad" data-note="E4"><span class="pad-label">drone</span></div>
+        <div class="pad" data-note="F4"><span class="pad-label">noise</span></div>
+        <div class="pad" data-note="G4"><span class="pad-label">pulse</span></div>
+        <div class="pad" data-note="A4"><span class="pad-label">tone</span></div>
+        <div class="pad" data-note="B4"><span class="pad-label">sweep</span></div>
+        <div class="pad" data-note="C5"><span class="pad-label">lead 2</span></div>
+        <div class="pad" data-note="D5"><span class="pad-label">sub 2</span></div>
+      </div>
+      <div class="footer-note">⚡ BLĀZ X · touch to trigger</div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // ----- Web Audio setup -----
+      let audioCtx = null;
+      let masterGain = null;
+      let pitchNode = null;     // will be an oscillator for pitch modulation (via detune)
+      let driveNode = null;     // waveshaper (distortion)
+      let delayNode = null;
+      let filterNode = null;
+      let filterType = 'lowpass'; // 'lowpass' or 'highpass'
+
+      // effect params
+      let currentGain = 0.8;
+      let currentPitch = 1.0;    // multiplier, used as detune offset
+      let currentDrive = 0.3;
+      let currentDelay = 0.2;
+
+      // We'll keep a reference to the active oscillator so we can apply pitch changes
+      let activeOscillator = null;
+      let activeGain = null;    // gain for the triggered note
+
+      // ----- helper: ensure audio context is running (iOS/Android) -----
+      function ensureAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          // build effect chain
+          masterGain = audioCtx.createGain();
+          masterGain.gain.value = currentGain;
+
+          // waveshaper (drive)
+          driveNode = audioCtx.createWaveShaper();
+          driveNode.curve = makeDistortionCurve(currentDrive);
+          driveNode.oversample = '4x';
+
+          // delay
+          delayNode = audioCtx.createDelay(1.0);
+          delayNode.delayTime.value = currentDelay;
+          // feedback for richer delay (internal)
+          const feedback = audioCtx.createGain();
+          feedback.gain.value = 0.35;
+          const dryGain = audioCtx.createGain();
+          dryGain.gain.value = 0.6;
+
+          // filter
+          filterNode = audioCtx.createBiquadFilter();
+          filterNode.type = filterType;
+          filterNode.frequency.value = 1800;
+          filterNode.Q.value = 0.8;
+
+          // connect: masterGain -> drive -> filter -> delay (with feedback) -> output
+          // We'll connect dynamically in the play function
+          // static chain: masterGain -> driveNode -> filterNode -> delayNode -> audioCtx.destination
+          masterGain.connect(driveNode);
+          driveNode.connect(filterNode);
+          filterNode.connect(delayNode);
+          delayNode.connect(audioCtx.destination);
+          // feedback loop
+          delayNode.connect(feedback);
+          feedback.connect(delayNode);
+          // add a little dry signal
+          const dry = audioCtx.createGain();
+          dry.gain.value = 0.3;
+          masterGain.connect(dry);
+          dry.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      }
+
+      // distortion curve
+      function makeDistortionCurve(amount) {
+        const samples = 256;
+        const curve = new Float32Array(samples);
+        for (let i = 0; i < samples; i++) {
+          const x = (i - samples/2) / (samples/2);
+          const k = Math.min(amount * 2, 1.2);
+          curve[i] = (1 + k) * x / (1 + k * Math.abs(x));
+        }
+        return curve;
+      }
+
+      // update drive curve
+      function updateDrive(val) {
+        if (driveNode) {
+          driveNode.curve = makeDistortionCurve(val);
+        }
+      }
+
+      // ----- play note (pad trigger) -----
+      function playNote(noteName) {
+        ensureAudioContext();
+        if (!audioCtx) return;
+
+        // map note name to frequency
+        const noteMap = {
+          'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61,
+          'G3': 196.00, 'A3': 220.00, 'B3': 246.94, 'C4': 261.63,
+          'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00,
+          'A4': 440.00, 'B4': 493.88, 'C5': 523.25, 'D5': 587.33
+        };
+        let freq = noteMap[noteName] || 261.63;
+
+        // create oscillator
+        const osc = audioCtx.createOscillator();
+        // waveform variation based on note
+        const waveTypes = ['sawtooth', 'square', 'sine', 'triangle', 'sawtooth', 'square', 'sine', 'triangle'];
+        const idx = Math.floor(Math.random() * waveTypes.length);
+        osc.type = waveTypes[idx % waveTypes.length];
+        osc.frequency.value = freq;
+
+        // apply pitch detune (multiplier -> cents)
+        const detuneCents = (currentPitch - 1.0) * 1200; // 1.0 = 0 cents
+        osc.detune.value = detuneCents;
+
+        // gain envelope (short attack/decay)
+        const noteGain = audioCtx.createGain();
+        noteGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        noteGain.gain.exponentialRampToValueAtTime(0.8, audioCtx.currentTime + 0.02);
+        noteGain.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + 0.1);
+        noteGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+
+        osc.connect(noteGain);
+        noteGain.connect(masterGain);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+
+        // store for potential live tweak (optional)
+        activeOscillator = osc;
+        activeGain = noteGain;
+
+        // clean up
+        osc.onended = () => {
+          osc.disconnect();
+          noteGain.disconnect();
+        };
+      }
+
+      // ----- update all effect params from sliders -----
+      function updateAllEffects() {
+        if (!audioCtx) return;
+        if (masterGain) masterGain.gain.setTargetAtTime(currentGain, audioCtx.currentTime, 0.01);
+        if (driveNode) updateDrive(currentDrive);
+        if (delayNode) delayNode.delayTime.setTargetAtTime(currentDelay, audioCtx.currentTime, 0.01);
+        if (filterNode) {
+          filterNode.type = filterType;
+          // optional frequency sweep if needed
+        }
+      }
+
+      // ----- UI bindings -----
+      const gainSlider = document.getElementById('gainSlider');
+      const pitchSlider = document.getElementById('pitchSlider');
+      const driveSlider = document.getElementById('driveSlider');
+      const delaySlider = document.getElementById('delaySlider');
+
+      const gainVal = document.getElementById('gainVal');
+      const pitchVal = document.getElementById('pitchVal');
+      const driveVal = document.getElementById('driveVal');
+      const delayVal = document.getElementById('delayVal');
+
+      // filter toggle
+      const filterBtns = document.querySelectorAll('.toggle-btn');
+
+      function updateSliderDisplay() {
+        gainVal.textContent = parseFloat(gainSlider.value).toFixed(2);
+        pitchVal.textContent = parseFloat(pitchSlider.value).toFixed(2);
+        driveVal.textContent = parseFloat(driveSlider.value).toFixed(2);
+        delayVal.textContent = parseFloat(delaySlider.value).toFixed(2);
+      }
+
+      gainSlider.addEventListener('input', function() {
+        currentGain = parseFloat(this.value);
+        gainVal.textContent = currentGain.toFixed(2);
+        if (audioCtx && masterGain) masterGain.gain.setTargetAtTime(currentGain, audioCtx.currentTime, 0.01);
+      });
+
+      pitchSlider.addEventListener('input', function() {
+        currentPitch = parseFloat(this.value);
+        pitchVal.textContent = currentPitch.toFixed(2);
+        // pitch will be applied on next note trigger
+      });
+
+      driveSlider.addEventListener('input', function() {
+        currentDrive = parseFloat(this.value);
+        driveVal.textContent = currentDrive.toFixed(2);
+        if (driveNode) updateDrive(currentDrive);
+      });
+
+      delaySlider.addEventListener('input', function() {
+        currentDelay = parseFloat(this.value);
+        delayVal.textContent = currentDelay.toFixed(2);
+        if (delayNode) delayNode.delayTime.setTargetAtTime(currentDelay, audioCtx.currentTime, 0.01);
+      });
+
+      // filter toggle
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          filterType = this.dataset.filter;
+          if (filterNode) {
+            filterNode.type = filterType;
+          }
+        });
+      });
+
+      // pad triggers
+      const pads = document.querySelectorAll('.pad');
+      pads.forEach(pad => {
+        pad.addEventListener('click', function(e) {
+          const note = this.dataset.note;
+          if (note) {
+            playNote(note);
+            // haptic feedback if available
+            if (navigator.vibrate) navigator.vibrate(12);
+          }
+        });
+        // touch support
+        pad.addEventListener('touchstart', function(e) {
+          e.preventDefault();
+          const note = this.dataset.note;
+          if (note) {
+            playNote(note);
+            if (navigator.vibrate) navigator.vibrate(10);
+          }
+        }, { passive: false });
+      });
+
+      // init: ensure audio context on first user interaction (any pad or slider)
+      function firstTouchInit() {
+        ensureAudioContext();
+        updateAllEffects();
+        updateSliderDisplay();
+        // remove listeners after first interaction
+        document.removeEventListener('click', firstTouchInit);
+        document.removeEventListener('touchstart', firstTouchInit);
+      }
+      document.addEventListener('click', firstTouchInit);
+      document.addEventListener('touchstart', firstTouchInit, { passive: true });
+
+      // Also init on slider interaction
+      [gainSlider, pitchSlider, driveSlider, delaySlider].forEach(s => {
+        s.addEventListener('pointerdown', function() {
+          ensureAudioContext();
+        });
+      });
+
+      // set initial values
+      updateSliderDisplay();
+      // set filter default active
+      document.querySelector('.toggle-btn[data-filter="lowpass"]')?.classList.add('active');
+
+      console.log('BLĀZ X · ready');
+    })();
+  </script>
+</body>
+</html>
