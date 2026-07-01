@@ -329,10 +329,10 @@
 
     <!-- external links -->
     <div class="link-grid">
-      <a class="btn-external" href="http://www.armaniblast.wordpress.com" target="_blank" rel="noopener noreferrer">
+      <a class="btn-external wordpress" href= "https://armaniblast.wordpress.com" target="_blank" rel="noopener noreferrer">
         <i>⧩</i> official website
       </a>
-      <a class="btn-external bandcamp" href="https://a-blast.bandcamp.com/track/di-oxxia-01" target="_blank" rel="noopener noreferrer">
+      <a class="btn-external bandcamp" href= "https://a-blast.bandcamp.com/track/di-oxxia-01" target="_blank" rel="noopener noreferrer">
         <i>▶</i> listen / buy · Di-oxxia 01
       </a>
     </div>
