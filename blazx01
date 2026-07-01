@@ -327,19 +327,15 @@
       <div class="artist-name"><span>✦</span> Armando Lopez de Elizalde <span>✦</span></div>
     </div>
 
-    <!-- external links -->
-    
-      <div class="link-grid">
+    !-- external links -->
+<div class="link-grid">
   <a class="btn-external wordpress" href="https://armaniblast.wordpress.com" target="_blank" rel="noopener noreferrer">
     <span>⧩</span> official website
   </a>
+  <a class="btn-external bandcamp" href="https://a-blast.bandcamp.com/track/di-oxxia-01" target="_blank" rel="noopener noreferrer">
+    <span>▶</span> listen / buy · Di-oxxia 01
+  </a>
 </div>
-    
-      </a>
-      <a class="btn-external bandcamp" href= "https://a-blast.bandcamp.com/track/di-oxxia-01" target="_blank" rel="noopener noreferrer">
-        <i>▶</i> listen / buy · Di-oxxia 01
-      </a>
-    </div>
 
     <!-- interactive sound lab -->
     <div class="sound-section">
