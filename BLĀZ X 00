@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BLĀZ X · Armando Lopez de Elizalde</title>
+  <style>
+    /* ----- reset & base ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0b0b0f;
+      color: #eaeef2;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    /* main card – cyberpunk glass */
+    .app-container {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(18, 20, 28, 0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 48px 48px 32px 32px;
+      padding: 24px 20px 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      transition: all 0.2s;
+    }
+
+    /* ----- splash / header ----- */
+    .splash-header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .brand-glow {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 6px;
+      background: linear-gradient(135deg, #b3f0ff, #7ae0ff, #3ac0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(0, 200, 255, 0.5);
+      margin-bottom: 6px;
+      line-height: 1;
+      filter: drop-shadow(0 0 12px #00a6ff55);
+    }
+
+    .artist-name {
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      color: #b6cad6;
+      background: rgba(0, 20, 30, 0.5);
+      display: inline-block;
+      padding: 4px 18px;
+      border-radius: 40px;
+    }
+
+    /* ----- links styling ----- */
+    .link-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn-external {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #eaeef2;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .btn-external:hover {
+      background: rgba(0, 255, 255, 0.1);
+      border-color: rgba(0, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div class="splash-header">
+      <div class="brand-glow">BLĀZ X</div>
+      <div class="artist-name">Armando Lopez de Elizalde</div>
+    </div>
+
+    <!-- external links section -->
+    <div class="link-grid">
+      <a class="btn-external" href="https://wordpress.com" target="_blank" rel="noopener noreferrer">
+        <span>⧩</span> official website
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // Audio engine setup variables
+      let audioCtx = null;
+      let gainSlider = null, pitchSlider = null, driveSlider = null, delaySlider = null;
+      let gainVal = null, pitchVal = null, driveVal = null, delayVal = null;
+      let filterBtns = null;
+      
+      let currentGain = 0.5, currentPitch = 1.0, currentDrive = 0.0, currentDelay = 0.3;
+      let filterType = 'lowpass';
+      
+      let masterGainNode = null, delayNode = null, filterNode = null, driveNode = null;
+
+      function ensureAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          setupAudioNodes();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      }
+
+      function setupAudioNodes() {
+        masterGainNode = audioCtx.createGain();
+        masterGainNode.gain.setValueAtTime(currentGain, audioCtx.currentTime);
+
+        driveNode = audioCtx.createWaveShaper();
+        updateDrive(currentDrive);
+
+        delayNode = audioCtx.createDelay(2.0);
+        delayNode.delayTime.setValueAtTime(currentDelay, audioCtx.currentTime);
+
+        filterNode = audioCtx.createBiquadFilter();
+        filterNode.type = filterType;
+        filterNode.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+        // Routing path
+        driveNode.connect(delayNode);
+        delayNode.connect(filterNode);
+        filterNode.connect(masterGainNode);
+        masterGainNode.connect(audioCtx.destination);
+      }
+
+      function updateDrive(amount) {
+        if (!driveNode) return;
+        if (amount <= 0) {
+          driveNode.curve = null;
+          return;
+        }
+        const k = typeof amount === 'number' ? amount * 100 : 50;
+        const n_samples = 44100;
+        const curve = new Float32Array(n_samples);
+        const deg = Math.PI / 180;
+        for (let i = 0; i < n_samples; ++i) {
+          const x = (i * 2) / n_samples - 1;
+          curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+        }
+        driveNode.curve = curve;
+      }
+
+      function updateAllEffects() {
+        if (!audioCtx) return;
+        if (masterGainNode) masterGainNode.gain.setTargetAtTime(currentGain, audioCtx.currentTime, 0.01);
+        if (delayNode) delayNode.delayTime.setTargetAtTime(currentDelay, audioCtx.currentTime, 0.01);
+        if (driveNode) updateDrive(currentDrive);
+        if (filterNode) filterNode.type = filterType;
+      }
+
+      function updateSliderDisplay() {
+        if (gainVal) gainVal.textContent = currentGain.toFixed(2);
+        if (pitchVal) pitchVal.textContent = currentPitch.toFixed(2);
+        if (driveVal) driveVal.textContent = currentDrive.toFixed(2);
+        if (delayVal) delayVal.textContent = currentDelay.toFixed(2);
+      }
+
+      function playNote(note) {
+        if (!audioCtx) ensureAudioContext();
+        
+        const baseFreqs = { 'C': 261.63, 'D': 293.66, 'E': 329.63, 'G': 392.00, 'A': 440.00 };
+        let freq = baseFreqs[note.toUpperCase()] || 261.63;
+        freq = freq * currentPitch;
+
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        oscGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+
+        osc.connect(oscGain);
+        
+        if (driveNode) {
+          oscGain.connect(driveNode);
+        } else {
+          oscGain.connect(audioCtx.destination);
+        }
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+      }
+
+      // Bind interfaces
+      gainSlider = document.getElementById('gainSlider') || document.querySelector('[data-effect="gain"]');
+      pitchSlider = document.getElementById('pitchSlider') || document.querySelector('[data-effect="pitch"]');
+      driveSlider = document.getElementById('driveSlider') || document.querySelector('[data-effect="drive"]');
+      delaySlider = document.getElementById('delaySlider') || document.querySelector('[data-effect="delay"]');
+
+      gainVal = document.getElementById('gainVal');
+      pitchVal = document.getElementById('pitchVal');
+      driveVal = document.getElementById('driveVal');
+      delayVal = document.getElementById('delayVal');
+      
+      filterBtns = document.querySelectorAll('.toggle-btn') || document.querySelectorAll('.filter-btn');
+
+      // Add slider interactions
+      if (gainSlider) {
+        gainSlider.addEventListener('input', function() {
+          currentGain = parseFloat(this.value);
+          if (gainVal) gainVal.textContent = currentGain.toFixed(2);
+          if (masterGainNode) masterGainNode.gain.setTargetAtTime(currentGain, audioCtx.currentTime, 0.01);
+        });
+      }
+
+      if (pitchSlider) {
+        pitchSlider.addEventListener('input', function() {
+          currentPitch = parseFloat(this.value);
+          if (pitchVal) pitchVal.textContent = currentPitch.toFixed(2);
+        });
+      }
+
+      if (driveSlider) {
+        driveSlider.addEventListener('input', function() {
+          currentDrive = parseFloat(this.value);
+          if (driveVal) driveVal.textContent = currentDrive.toFixed(2);
+          if (driveNode) updateDrive(currentDrive);
+        });
+      }
+
+      if (delaySlider) {
+        delaySlider.addEventListener('input', function() {
+          currentDelay = parseFloat(this.value);
+          if (delayVal) delayVal.textContent = currentDelay.toFixed(2);
+          if (delayNode) delayNode.delayTime.setTargetAtTime(currentDelay, audioCtx.currentTime, 0.01);
+        });
+      }
+
+      // Filter toggle interaction
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          filterType = this.dataset.filter || 'lowpass';
+          if (filterNode) {
+            filterNode.type = filterType;
+          }
+        });
+      });
+
+      // Pad triggers
+      const pads = document.querySelectorAll('.pad');
+      pads.forEach(pad => {
+        pad.addEventListener('click', function(e) {
+          const note = this.dataset.note;
+          if (note) {
+            playNote(note);
+            if (navigator.vibrate) navigator.vibrate(12);
+          }
+        });
+        
+        pad.addEventListener('touchstart', function(e) {
+          e.preventDefault();
+          const note = this.dataset.note;
+          if (note) {
+            playNote(note);
+            if (navigator.vibrate) navigator.vibrate(10);
+          }
+        }, { passive: false });
+      });
+
+      // Initial interactive hook
+      function firstTouchInit() {
+        ensureAudioContext();
+        updateAllEffects();
+        updateSliderDisplay();
+        document.removeEventListener('click', firstTouchInit);
