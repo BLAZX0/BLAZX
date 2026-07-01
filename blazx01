@@ -328,9 +328,13 @@
     </div>
 
     <!-- external links -->
-    <div class="link-grid">
-      <a class="btn-external wordpress" href= "https://armaniblast.wordpress.com" target="_blank" rel="noopener noreferrer">
-        <i>⧩</i> official website
+    
+      <div class="link-grid">
+  <a class="btn-external wordpress" href="https://armaniblast.wordpress.com" target="_blank" rel="noopener noreferrer">
+    <span>⧩</span> official website
+  </a>
+</div>
+    
       </a>
       <a class="btn-external bandcamp" href= "https://a-blast.bandcamp.com/track/di-oxxia-01" target="_blank" rel="noopener noreferrer">
         <i>▶</i> listen / buy · Di-oxxia 01
